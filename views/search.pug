@@ -1,0 +1,50 @@
+extends layout
+
+block content
+  div.container-desktop
+    div.title.text-center
+      span Search Customer
+
+    div.col-sm-6.col-sm-offset-3
+      div(style="text-align: right;").form-group
+        button(type="button" id="home" style="transition-duration: 0.2s;").btn.btn-info
+          i.glyphicon.glyphicon-home.icon-left
+          span Home
+
+    div.col-sm-6.col-sm-offset-3
+      div.panel.panel-success
+        div.panel-heading
+          span รายการผู้รับพัสดุ
+        div.panel-body
+          table(id="txtCustomer" style="width: 100%").table.table-striped.table-bordered
+            thead
+              tr
+                th ลำดับ
+                th ชื่อผู้รับ
+                th ที่อยู่
+                th ตำบล/อำเภอ/จังหวัด/รหัสไปรษณีย์
+                th ยอดเงิน
+                th วันที่จัดส่ง
+            tbody
+              each customer in customers
+                tr
+                  td(style="text-align: center;")= customer.no
+                  td= customer.name + ' (' + customer.mobile + ')'
+                  td= customer.address
+                  td= customer.subarea + ' ' + customer.area + ' ' + customer.province + ' ' + customer.postalcode
+                  td(style="text-align: right;")= customer.cod
+                  td= customer.date
+  script.
+    $(() => {
+      $('input').prop('autocomplete', 'off')
+      $('#txtCustomer').DataTable({
+        order: [[0, 'desc']],
+        aLengthMenu: [
+          [100, -1],
+          [100, "All"]
+        ],
+        iDisplayLength: 100
+      })
+
+      $('#home').click(() => { location.href = '/keydata' })
+    })

@@ -1,0 +1,232 @@
+extends layout
+
+block content
+  div.container-desktop
+    div.title.text-center
+      span บันทึกรายการจัดส่ง Kerry
+    form(id="kerry" method="post" action="/keydata")
+      div.col-sm-6.col-sm-offset-3
+        div.form-group
+          label(for="txtDate") วันที่จัดส่ง :
+          input(type="date" id="txtDate" name="txtDate" style="width:12em; display: initial; margin-left: .5em;" value= result[0].datenow).form-control
+          div(role="group").btn-group.pull-right
+            button(type="button" id="export" style="margin-bottom: 2px; transition-duration: 0.2s;").btn.btn-success.text-right
+              i.glyphicon.glyphicon-download-alt.icon-left
+              span Export Excel
+            button(type="button" id="setting").btn.btn-success
+              i.glyphicon.glyphicon-cog
+            button(type="button" id="search").btn.btn-success
+              i.glyphicon.glyphicon-search
+      div.col-sm-6.col-sm-offset-3
+        div.panel.panel-primary
+          div.panel-heading
+            span ข้อมูลผู้รับพัสดุ
+          div.panel-body
+            div.form-group
+              label(for="txtMobile")
+                span เบอร์โทรศัพท์
+              input(type="text" id="txtMobile" name="txtMobile" oninput="NumberOnly(this)" placeholder="เบอร์โทรศัพท์" autofocus).form-control
+
+            div.form-group
+              label(for="txtName")
+                span ชื่อผู้รับ
+              input(type="text" id="txtName" name="txtName" placeholder="ชื่อผู้รับ").form-control
+
+            div.form-group
+              label(for="txtAddress")
+                span ที่อยู่
+              input(type="text" id="txtAddress" name="txtAddress" placeholder="ที่อยู่").form-control
+
+            div.form-group
+              label(for="txtAddressAdditional")
+                span ตำบล/อำเภอ/จังหวัด/รหัสไปรษณีย์
+              input(type="text" id="txtAddressAdditional" name="txtAddressAdditional" placeholder="ตำบล/อำเภอ/จังหวัด/รหัสไปรษณีย์" required="required").form-control
+
+            div.form-group
+              label(for="txtCOD")
+                span ยอดเงิน COD (สูงสุด 50,000 บาท)
+              input(type="text" id="txtCOD" name="txtCOD" oninput="NumberOnly(this)" placeholder="์ยอดเงิน COD (ถ้ามี)").form-control
+            div.form-group
+              label(for="txtRemark")
+                span หมายเหตุ
+              input(type="text" id="txtRemark" name="txtRemark" placeholder="์หมายเหตุ (ถ้ามี)").form-control
+
+            div.form-group
+              label(for="txtEmail")
+                span อีเมล
+              input(type="email" id="txtEmail" name="txtEmail" placeholder="์อีเมล (ถ้ามี)").form-control
+          div.panel-footer.text-center  
+            button(id="save" style="transition-duration: 0.2s;").btn.btn-primary.disabled
+              span บันทึก / เพิ่ม
+
+      div.col-sm-6.col-sm-offset-3
+        div.panel.panel-info
+          div.panel-heading
+            span รายการผู้รับพัสดุ
+          div.panel-body
+            table(id="txtCustomer" style="width: 100%").table.table-striped.table-bordered
+              thead
+                tr
+                  th ลำดับ
+                  th ชื่อผู้รับ
+                  th ที่อยู่
+                  th ตำบล/อำเภอ/จังหวัด/รหัสไปรษณีย์
+                  th ยอดเงิน
+                  th แก้ไข
+                  th ลบ
+              tbody
+                each customer in result[1].customers
+                  tr
+                    td(style="text-align: center;")= customer.no
+                    td= customer.name + ' (' + customer.mobile + ')'
+                    td= customer.address
+                    td= customer.subarea + ' ' + customer.area + ' ' + customer.province + ' ' + customer.postalcode
+                    td(style="text-align: right;")= customer.cod
+                    td.td-center
+                      a(href='/editdata?date=' + result[0].datenow + '&no=' + customer.no).btn.btn-warning
+                        i.glyphicon.glyphicon-pencil
+                    td.td-center
+                      a(data-toggle="confirmation" data-placement="left" data-popout="true" data-title="ยืนยันการลบ"
+                      data-btn-ok-label="ยืนยันลบ" data-btn-ok-icon="glyphicon glyphicon-trash" data-btn-ok-class="btn-danger"
+                      data-btn-cancel-label="ยกเลิก" data-btn-cancel-icon="glyphicon glyphicon-remove" data-btn-cancel-class="btn-default"
+                      href='/deletedata?date=' + result[0].datenow + '&no=' + customer.no).btn.btn-danger
+                        i.glyphicon.glyphicon-remove
+
+      div(id="msgbox" role="dialog").modal.fade
+        div.modal-dialog
+          div.modal-content
+            div.modal-body
+              div(id="msgcolor" role="alert").alert.alert-dismissible
+                button(type="button" id="close" data-dismiss="modal" style="transition-duration: 0.2s;").close
+                  span &times;
+                h4(id="msgres").modal-title
+
+  div(id="fromto" role="dialog").modal.fade
+    div.modal-dialog
+      div.modal-content
+        div.modal-header
+          button(type="button" data-dismiss="modal" aria-label="Close").close
+            span(aria-hidden="true") &times;
+          h4.modal-title From-To
+        div.modal-body
+          div.panel.panel-default
+            div.panel-body
+              div(style="text-align: center;").form-inline
+                div.form-group
+                  label(for="from").control-label From :
+                  input(type="text" id="from" name="from" oninput="NumberOnly(this)" placeholder="From" style="margin-left: 5px; margin-right: 5px;" value= result[0].from).form-control
+
+                div.form-group
+                  label(for="to").control-label To :
+                  input(type="text" id="to" name="to" oninput="NumberOnly(this)" placeholder="To" style="margin-left: 5px; margin-right: 5px;" value= result[0].to).form-control
+
+  script.
+    $(() => {
+      $('input').prop('autocomplete', 'off')
+      $('[data-toggle=confirmation]').confirmation({ rootSelector: '[data-toggle=confirmation]' })
+      $('#txtCustomer').DataTable({
+        order: [[0, 'desc']],
+        aLengthMenu: [
+          [10, -1],
+          [10, "All"]
+        ],
+        iDisplayLength: 10
+      })
+
+      JSZipUtils.getBinaryContent('/jsons/subdistrict.zip', (err, data) => {
+        if(err) throw err
+        JSZip.loadAsync(data).then((zip) => {
+          zip.file('subdistrict.json').async('string').then((json) => {
+            const options = {
+              data: JSON.parse(json),
+              getValue: 'name',
+              list: {
+                maxNumberOfElements: 20,
+                match: {
+                  enabled: true
+                }
+              }
+            }
+            $('#txtAddressAdditional').easyAutocomplete(options)
+          })
+        })
+      })
+
+      $('#search').click(() => { location.href = '/search' })
+      $('#fromto').on('shown.bs.modal', function () { $('#from').focus() })
+      $('#setting').click(() => { $('#fromto').modal('show') })
+
+      $('#msgbox').on('shown.bs.modal', function () { $('#close').focus() })
+      $('#txtDate').change(() => { location.href = '/keydata?date=' + $('#txtDate').val() })
+
+      $('#kerry input').on('keyup blur', (e) => {
+        let err = false,
+            id = e.target.id
+
+        if (id == 'txtRemark' || id == 'txtEmail' || id == 'txtCOD' 
+        || $('#save').find('span').text() == 'Processing') { return }   
+        CheckEmpty(err, id)
+
+        if (id == 'txtMobile') { CheckMobile(err, id) }            
+       
+        if ($('#txtMobile').val().length == 10 && $('#txtName').val().length > 0
+        && $('#txtAddress').val().length > 0 && $('#txtAddressAdditional').val().length > 0) {
+          $('#save').removeClass('disabled')
+        } else { $('#save').addClass('disabled') }      
+      })
+
+      $('#kerry input').keypress((e) => { if (e.which == 13) { $('#save').click() } })
+
+      $('#save').click((e) => {
+        e.preventDefault()
+        let err = false
+
+        $(this).find('span').text('Processing')
+        $(this).addClass('disabled')
+
+        err = CheckMobile(err, 'txtMobile')
+        err = CheckEmpty(err, 'txtName')
+        err = CheckEmpty(err, 'txtAddress')
+        err = CheckEmpty(err, 'txtAddressAdditional')
+
+        if (err) {
+          FocusError()
+          $(this).find('span').text('บันทึก / เพิ่ม')
+        } else { $('form').submit() }
+      })
+
+      $('#export').click(() => {
+        let err = false
+        err = CheckEmpty(err, 'txtDate')
+        err = CheckEmpty(err, 'from')
+        err = CheckEmpty(err, 'to')
+
+        if (err) FocusError()
+        else {
+          $.ajax({
+            url: '/export',
+            type: 'post',
+            data: {
+              date: $('#txtDate').val(),
+              from: $('#from').val(),
+              to: $('#to').val()
+            },
+            dataType: 'json',
+            cache: false,
+            timeout: 5000,
+            beforeSend: () => { $('#export').prop('disabled', true).addClass('disabled') },
+            success: (result) => {
+              $('#msgbox').modal('show')
+              $('#msgcolor').addClass('alert-success').removeClass('alert-danger')
+              $('#msgres').text(result.msg)
+            },
+            error: (result) => {
+              $('#msgbox').modal('show')
+              $('#msgcolor').addClass('alert-danger').removeClass('alert-success')
+              $('#msgres').text(result.responseJSON.msg)
+            },
+            complete: () => { $('#export').prop('disabled', false).removeClass('disabled') }
+          })
+        }
+      })
+    })

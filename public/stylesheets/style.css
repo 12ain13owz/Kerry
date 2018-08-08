@@ -1,0 +1,42 @@
+@font-face {
+    font-family: 'Kanit';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Kanit Regular'), local('Kanit-Regular'), url(../fonts/nKKZ-Go6G5tXcraBGwCYdA.woff2) format('woff2');
+    unicode-range: U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+
+body {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: #f1f4f9 !important;
+    font-family: 'Kanit', 'Tahoma';
+    font-size: 12px !important;
+    color: #666;
+    letter-spacing: .4px;
+}
+
+input {
+    font-family: 'Kanit', 'Tahoma';
+    color: #666;
+    letter-spacing: .4px;
+}
+
+.icon-left {
+    margin-right: 4px;
+}
+
+.icon-right {
+    margin-left: 4px;
+}
+
+.title {
+    font-size: 1.5em !important;
+    color: rgb(220, 93, 20);
+    margin: 1em 0;
+}
+
+.td-center {
+    vertical-align: inherit !important;
+    text-align: center !important;
+}
