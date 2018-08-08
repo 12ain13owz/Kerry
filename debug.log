@@ -1,5 +1,0 @@
-[0710/121702.384:ERROR:settings.cc(319)] Settings magic is not 1129342067
-[0721/113814.151:ERROR:exception_handler_server.cc(526)] ConnectNamedPipe: The pipe is being closed. (0xE8)
-[0730/013740.013:ERROR:exception_handler_server.cc(526)] ConnectNamedPipe: The pipe is being closed. (0xE8)
-[0802/094854.209:ERROR:exception_handler_server.cc(526)] ConnectNamedPipe: The pipe is being closed. (0xE8)
-[0808/104410.036:ERROR:exception_handler_server.cc(526)] ConnectNamedPipe: The pipe is being closed. (0xE8)
