@@ -15,7 +15,7 @@ block content
               span Export Excel
             button(type="button" id="setting").btn.btn-success
               i.glyphicon.glyphicon-cog
-            button(type="button" id="search").btn.btn-success
+            a(href="/search").btn.btn-success
               i.glyphicon.glyphicon-search
       div.col-sm-6.col-sm-offset-3
         div.panel.panel-primary
@@ -152,7 +152,6 @@ block content
         })
       })
 
-      $('#search').click(() => { location.href = '/search' })
       $('#fromto').on('shown.bs.modal', function () { $('#from').focus() })
       $('#setting').click(() => { $('#fromto').modal('show') })
 
