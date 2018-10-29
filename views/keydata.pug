@@ -63,6 +63,11 @@ block content
         div.panel.panel-info
           div.panel-heading
             span รายการผู้รับพัสดุ
+            div.pull-right
+              span EMS: 
+              span= result[0].ems
+              span  / COD: 
+              span= result[0].cod
           div.panel-body
             table(id="txtCustomer" style="width: 100%").table.table-striped.table-bordered
               thead

@@ -55,15 +55,25 @@ router.get('/keydata', (req, res, next) => {
     db.all(sql, [req.session.datenow], (err, rows) => {
       if (err) console.log(err)
       let to = 0
+      let ems = 0
+      let cod = 0
 
-      if (rows.length > 0)
+      if (rows.length > 0) {
         to = rows[rows.length - 1].no
+
+        for (let i = 0; i < rows.length; i++) {
+          if (rows[i].cod > 0) cod++
+          else ems++
+        }
+      }
 
       db.close()
       res.render('keydata', result = [{
         datenow: req.session.datenow,
         from: 1,
-        to: to
+        to: to,
+        ems: ems,
+        cod: cod
       }, {
         customers: rows
       }])
