@@ -1,5 +1,5 @@
 # dependencies
 /node_modules
-NTCustomer.url
-db_numtrend.sqlite
-run.bat
+/NTCustomer.url
+/db_numtrend.sqlite
+/run.bat
