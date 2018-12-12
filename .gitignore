@@ -1,2 +1,4 @@
 # dependencies
 /node_modules
+db_numtrend.sqlite
+run.bat
