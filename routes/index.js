@@ -37,9 +37,9 @@ router.use(compression())
 router.use(session(options))
 router.use(favicon(icurl))
 
-// opn('http://localhost:3000/keydata', {
-//   app: 'chrome'
-// })
+opn('http://localhost:3000/keydata', {
+  app: 'chrome'
+})
 
 router.get('/keydata', (req, res, next) => {
   const db = new sqlite3.Database(dbname)
