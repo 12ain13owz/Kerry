@@ -12,11 +12,14 @@ block content
           div(role="group").btn-group.pull-right
             button(type="button" id="export" style="margin-bottom: 2px; transition-duration: 0.2s;").btn.btn-success.text-right
               i.glyphicon.glyphicon-download-alt.icon-left
-              span Export Excel
+              span Excel
+            button(type="button" id="pdf" style="margin-bottom: 2px; transition-duration: 0.2s;").btn.btn-success.text-right
+              i.glyphicon.glyphicon-download-alt.icon-left
+              span PDF
             button(type="button" id="setting").btn.btn-success
               i.glyphicon.glyphicon-cog
             a(href="/search").btn.btn-success
-              i.glyphicon.glyphicon-search
+              i.glyphicon.glyphicon-search            
       div.col-sm-6.col-sm-offset-3
         div.panel.panel-primary
           div.panel-heading
@@ -233,4 +236,31 @@ block content
           })
         }
       })
+
+      $('#pdf').click(() => {
+        $.ajax({
+          url: '/customers',
+          type: 'post',
+          data: {
+              date: $('#txtDate').val(),
+              from: $('#from').val(),
+              to: $('#to').val()
+            },
+          dataType: 'json',
+          cache: false,
+          timeout: 5000,
+            beforeSend: () => { $('#pdf').prop('disabled', true).addClass('disabled') },
+          success: (result) => {      
+            $('#msgbox').modal('show')
+            $('#msgcolor').addClass('alert-success').removeClass('alert-danger')
+            $('#msgres').text(result.msg)                
+          },
+          error: (result) => {
+              $('#msgbox').modal('show')
+              $('#msgcolor').addClass('alert-danger').removeClass('alert-success')
+              $('#msgres').text(result.responseJSON.msg)
+            },
+          complete: () => { $('#pdf').prop('disabled', false).removeClass('disabled') }
+        })        
+      })      
     })

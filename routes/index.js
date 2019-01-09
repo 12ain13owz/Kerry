@@ -3,10 +3,13 @@ const express = require('express')
 const router = express.Router()
 
 const favicon = require('serve-favicon')
+const PDFDocument = require('pdfkit')
+const PDFTable = require('voilab-pdf-table')
+const fs = require('fs')
 const icurl = './public/images/numtrend.ico'
 
 const session = require('express-session')
-const filestore = require('session-file-store')(session)
+
 let options = {
   secret: 'Numtrend',
   resave: true,
@@ -34,9 +37,9 @@ router.use(compression())
 router.use(session(options))
 router.use(favicon(icurl))
 
-opn('http://localhost:3000/keydata', {
-  app: 'chrome'
-})
+// opn('http://localhost:3000/keydata', {
+//   app: 'chrome'
+// })
 
 router.get('/keydata', (req, res, next) => {
   const db = new sqlite3.Database(dbname)
@@ -238,9 +241,7 @@ router.post('/export', (req, res, next) => {
             msg: 'Error! Excel is Working On'
           })
         } else {
-          res.send({
-            msg: 'Path: ' + url
-          })
+          res.send({ msg: 'Path: ' + url })
         }
       })
     })
@@ -275,6 +276,130 @@ router.post('/export', (req, res, next) => {
   ws.cell(8, 7).string('Zip Code')
   ws.cell(8, 8).string('COD Amt (Baht)')
 })
+
+
+router.post('/customers', (req, res, next) => {
+  const db = new sqlite3.Database(dbname)
+  let sql = 'SELECT * FROM nt_customer WHERE date = ? AND no BETWEEN ? AND ?'
+  let url = process.env.userprofile +
+    String.fromCharCode(92) + 'Desktop' +
+    String.fromCharCode(92) + req.body.date + '.pdf'
+
+
+  db.serialize(() => {
+    db.all(sql, [req.body.date, Number(req.body.from), Number(req.body.to)], (err, rows) => {
+      if (err) console.log(err)
+
+      let doc = new PDFDocument({
+        Title: 'Customers',
+        Author: 'Numtrend',
+        CreationDate: new Date(),
+        autoFirstPage: false,
+        bufferPages: true
+      })
+
+      let table = new PDFTable(doc, {
+        bottomMargin: 30
+      })
+
+      doc.pipe(fs.createWriteStream(url))
+      doc.registerFont('TH', './public/fonts/THSarabunNew.ttf')
+      doc.font('TH')
+      doc.fontSize(11)
+
+      doc.addPage({
+        layout: 'portrait',
+        size: [595, 841],
+        margin: 4
+      })
+
+      table
+        .addPlugin(new (require('voilab-pdf-table/plugins/fitcolumn'))({
+          column: 'description',
+        }))
+
+        .addColumns([
+          {
+            id: 'description',
+            align: 'center',
+            height: 70
+          },
+          {
+            id: 'quantity',
+            align: 'center',
+            width: 200,
+          },
+          {
+            id: 'price',
+            align: 'center',
+            width: 200,
+          }
+        ])
+
+      for (let i = 0; i < rows.length; i++) {
+        let addressc1 = ''
+        let addressc2 = ''
+        let addressc3 = ''
+
+        let c2 = 10
+        let c3 = 20
+
+        if (i % 10 == 0 && i != 0) i += 20
+        if (i >= rows.length) break
+
+        addressc1 = `
+        ${rows[i].no}) ${rows[i].name}
+        ${rows[i].address}
+        ${rows[i].subarea} ${rows[i].area} ${rows[i].province}
+        ${rows[i].postalcode} ( ${rows[i].mobile} )`
+
+        if (rows[i].cod != '')
+          addressc1 = `${addressc1} ปลายทาง ${rows[i].cod}`
+
+
+        if (i + c2 >= rows.length) addressc2 = ''
+        else {
+          addressc2 = `
+          ${rows[i + c2].no}) ${rows[i + c2].name}
+          ${rows[i + c2].address}
+          ${rows[i + c2].subarea} ${rows[i + c2].area} ${rows[i + c2].province}
+          ${rows[i + c2].postalcode} ( ${rows[i + c2].mobile} )`
+
+          if (rows[i + c2].cod != '')
+            addressc2 = `${addressc2} ปลายทาง ${rows[i + c2].cod}`
+        }
+
+        if (i + c3 >= rows.length) addressc3 = ''
+        else {
+
+          addressc3 = `
+          ${rows[i + c3].no}) ${rows[i + c3].name}
+          ${rows[i + c3].address}
+          ${rows[i + c3].subarea} ${rows[i + c3].area} ${rows[i + c3].province}
+          ${rows[i + c3].postalcode} ( ${rows[i + c3].mobile} )`
+
+          if (rows[i + c3].cod != '')
+            addressc3 = `${addressc3} ปลายทาง ${rows[i + c3].cod}`
+        }
+
+        if (i % 10 == 0 && i != 0)
+          doc.addPage({
+            layout: 'portrait',
+            size: [595, 841],
+            margin: 4
+          })
+
+        table.addBody([
+          { description: addressc1, quantity: addressc2, price: addressc3 }
+        ])
+      }
+
+      doc.end()
+      res.send({ msg: 'Path: ' + url })
+    })
+  })
+})
+
 
 /* Convert Text to Number */
 /*
