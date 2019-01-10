@@ -351,7 +351,7 @@ router.post('/customers', (req, res, next) => {
         ${rows[i].no}) ${rows[i].name}
         ${rows[i].address}
         ${rows[i].subarea} ${rows[i].area} ${rows[i].province}
-        ${rows[i].postalcode} ( ${rows[i].mobile} )`
+        ${rows[i].postalcode} ( ${rows[i].mobile.slice(0, 3)}-${rows[i].mobile.slice(3)} )`
 
         if (rows[i].cod != '')
           addressc1 = `${addressc1} ปลายทาง ${rows[i].cod}`
@@ -363,7 +363,7 @@ router.post('/customers', (req, res, next) => {
           ${rows[i + c2].no}) ${rows[i + c2].name}
           ${rows[i + c2].address}
           ${rows[i + c2].subarea} ${rows[i + c2].area} ${rows[i + c2].province}
-          ${rows[i + c2].postalcode} ( ${rows[i + c2].mobile} )`
+          ${rows[i + c2].postalcode} ( ${rows[i + c2].mobile.slice(0, 3)}-${rows[i + c2].mobile.slice(3)} )`
 
           if (rows[i + c2].cod != '')
             addressc2 = `${addressc2} ปลายทาง ${rows[i + c2].cod}`
@@ -376,7 +376,7 @@ router.post('/customers', (req, res, next) => {
           ${rows[i + c3].no}) ${rows[i + c3].name}
           ${rows[i + c3].address}
           ${rows[i + c3].subarea} ${rows[i + c3].area} ${rows[i + c3].province}
-          ${rows[i + c3].postalcode} ( ${rows[i + c3].mobile} )`
+          ${rows[i + c3].postalcode} ( ${rows[i + c3].mobile.slice(0, 3)}-${rows[i + c3].mobile.slice(3)} )`
 
           if (rows[i + c3].cod != '')
             addressc3 = `${addressc3} ปลายทาง ${rows[i + c3].cod}`
